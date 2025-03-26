@@ -1,0 +1,61 @@
+services:
+  rsshub:
+    image: diygod/rsshub:chromium-bundled@sha256:ad954b7e0f72ad4dde40f9f555a505f280a0337be68bbbad803b89c34b1b4f17
+    hostname: rsshub
+    container_name: rsshub__rsshub
+
+    restart: unless-stopped
+
+    environment:
+      TWITTER_AUTH_TOKEN: ${TWITTER_AUTH_TOKEN}
+
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+
+    networks:
+      - default
+
+  nginx:
+    image: nginx:1.27.3@sha256:42e917aaa1b5bb40dd0f6f7f4f857490ac7747d7ef73b391c774a41a8b994f15
+    hostname: nginx
+    container_name: rsshub__nginx
+
+    restart: unless-stopped
+
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+
+      - type: bind
+        source: ./.htpasswd
+        target: /etc/htpasswd
+        read_only: true
+
+  cloudflared:
+    image: cloudflare/cloudflared:2025.2.1@sha256:03737f27c38ecfb257a55664953cac510727cf27052c51ddb7c8ff1a2b9969e1
+    hostname: cloudflared
+    container_name: rsshub__cloudflared
+
+    restart: unless-stopped
+
+    environment:
+      TUNNEL_LOGFILE: /dev/stdout
+
+    command: tunnel run --token ${TUNNEL_TOKEN}
+    user: root
+
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+    networks:
+      default:
+
+networks:
+  default:
+    name: rsshub__default
