@@ -1,6 +1,6 @@
 services:
   rsshub:
-    image: diygod/rsshub:chromium-bundled@sha256:4bb25da053e63e67963875516290c98cb1b79f2c5a613b3d239368c8a57b27e5
+    image: diygod/rsshub:chromium-bundled@sha256:64a18e5d30cf36112ad08b0bf1fd2538ea4a29d0768b05661bab35d4ec42266a
     hostname: rsshub
     container_name: rsshub__rsshub
 
